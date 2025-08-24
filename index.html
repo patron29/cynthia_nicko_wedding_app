@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cynthia & Nicko's Wedding Photos</title>
+    <title>Cynthia & Nicko's Wedding - Photos & Messages</title>
     <style>
         * {
             margin: 0;
@@ -15,34 +15,74 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        
+        .tabs {
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
         }
         
         .container {
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 500px;
-            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
         }
         
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
+        .tab-content {
+            display: none;
         }
         
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
+        .tab-content.active {
+            display: block;
         }
         
+        /* Upload Section Styles */
         .upload-area {
             border: 3px dashed #667eea;
             border-radius: 15px;
@@ -51,6 +91,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             background: #f9f9ff;
+            text-align: center;
         }
         
         .upload-area:hover {
@@ -83,22 +124,28 @@
             display: none;
         }
         
-        .name-input {
+        .input-field {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             transition: border-color 0.3s;
         }
         
-        .name-input:focus {
+        .input-field:focus {
             outline: none;
             border-color: #667eea;
         }
         
-        .upload-btn {
+        textarea.input-field {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -111,18 +158,17 @@
             margin-bottom: 20px;
         }
         
-        .upload-btn:hover:not(:disabled) {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         
-        .upload-btn:disabled {
+        .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         
         .file-list {
-            text-align: left;
             margin: 20px 0;
         }
         
@@ -144,11 +190,6 @@
             margin-right: 10px;
         }
         
-        .file-size {
-            color: #999;
-            font-size: 14px;
-        }
-        
         .remove-btn {
             background: #ff4444;
             color: white;
@@ -159,134 +200,438 @@
             font-size: 12px;
         }
         
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 20px 0;
-            display: none;
+        /* Gallery Styles */
+        .gallery-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .success-message {
-            background: #4caf50;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
-        }
-        
-        .error-message {
-            background: #f44336;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: none;
-        }
-        
-        .info-box {
-            background: #f0f0ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-            text-align: left;
-        }
-        
-        .info-box h3 {
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #667eea;
+            background: white;
             color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            background: #f5f5f5;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .gallery-item-info {
+            padding: 10px;
+            background: white;
+        }
+        
+        .gallery-item-name {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .gallery-item-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Messages/Guestbook Styles */
+        .message-card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .message-author {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .message-text {
+            color: #333;
+            line-height: 1.6;
             margin-bottom: 10px;
         }
         
-        .info-box p {
+        .message-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            max-width: 90%;
+            max-height: 80vh;
+        }
+        
+        .modal-content img, .modal-content video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-close:hover {
+            color: #667eea;
+        }
+        
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+        }
+        
+        .modal-prev {
+            left: 20px;
+        }
+        
+        .modal-next {
+            right: 20px;
+        }
+        
+        .modal-nav:hover {
+            color: #667eea;
+        }
+        
+        /* Loading and Messages */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .alert.success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .alert.error {
+            background: #f44336;
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9ff;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
             color: #666;
             font-size: 14px;
-            line-height: 1.6;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .modal-nav {
+                font-size: 30px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>💑 Cynthia & Nicko's Wedding</h1>
+        <p>August 29th, 2025 • Share Your Memories With Us</p>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('upload')">📸 Upload Photos</button>
+        <button class="tab-btn" onclick="showTab('gallery')">🖼️ View Gallery</button>
+        <button class="tab-btn" onclick="showTab('messages')">💌 Guestbook</button>
+    </div>
+    
     <div class="container">
-        <h1>💑 Sarah & John's Wedding</h1>
-        <p class="subtitle">Share your photos & videos with us!</p>
-        
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">Click or drag files here</div>
-            <div class="upload-subtext">Photos & Videos (up to 50MB each)</div>
+        <!-- Upload Tab -->
+        <div id="upload" class="tab-content active">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Share Your Photos & Videos</h2>
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Click or drag files here</div>
+                <div class="upload-subtext">Photos & Videos (up to 50MB each)</div>
+            </div>
+            
+            <input type="file" id="fileInput" multiple accept="image/*,video/*">
+            
+            <input type="text" class="input-field" id="uploaderName" placeholder="Your name (optional)">
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <button class="btn" id="uploadBtn" disabled onclick="uploadFiles()">
+                Upload Photos & Videos
+            </button>
+            
+            <div class="alert success" id="uploadSuccess">
+                ✅ Thank you! Your photos have been uploaded successfully!
+            </div>
+            
+            <div class="alert error" id="uploadError">
+                ❌ Oops! Something went wrong. Please try again.
+            </div>
         </div>
         
-        <input type="file" id="fileInput" multiple accept="image/*,video/*">
-        
-        <input type="text" class="name-input" id="uploaderName" placeholder="Your name (optional)">
-        
-        <div class="file-list" id="fileList"></div>
-        
-        <button class="upload-btn" id="uploadBtn" disabled onclick="uploadFiles()">
-            Upload Photos & Videos
-        </button>
-        
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-fill" id="progressFill"></div>
+        <!-- Gallery Tab -->
+        <div id="gallery" class="tab-content">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Wedding Photo Gallery</h2>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="photoCount">0</div>
+                    <div class="stat-label">Photos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="videoCount">0</div>
+                    <div class="stat-label">Videos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="contributorCount">0</div>
+                    <div class="stat-label">Contributors</div>
+                </div>
+            </div>
+            
+            <div class="gallery-controls">
+                <button class="filter-btn active" onclick="filterGallery('all')">All</button>
+                <button class="filter-btn" onclick="filterGallery('photos')">Photos</button>
+                <button class="filter-btn" onclick="filterGallery('videos')">Videos</button>
+                <button class="filter-btn" onclick="refreshGallery()">🔄 Refresh</button>
+            </div>
+            
+            <div id="galleryGrid" class="gallery-grid">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading gallery...</p>
+                </div>
+            </div>
+            
+            <div id="emptyGallery" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">📷</div>
+                <h3>No photos yet!</h3>
+                <p>Be the first to share your memories from our special day!</p>
+            </div>
         </div>
         
-        <div class="success-message" id="successMessage">
-            ✅ Thank you! Your photos have been uploaded successfully!
+        <!-- Messages Tab -->
+        <div id="messages" class="tab-content">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Leave Us a Message</h2>
+            
+            <input type="text" class="input-field" id="messageName" placeholder="Your name">
+            <textarea class="input-field" id="messageText" placeholder="Write your message to the happy couple..."></textarea>
+            <button class="btn" onclick="sendMessage()">💌 Send Message</button>
+            
+            <div class="alert success" id="messageSuccess">
+                ✅ Thank you for your lovely message!
+            </div>
+            
+            <div class="alert error" id="messageError">
+                ❌ Please enter your name and message.
+            </div>
+            
+            <h3 style="margin: 30px 0 20px; color: #333;">Guest Messages</h3>
+            <div id="messagesList">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading messages...</p>
+                </div>
+            </div>
+            
+            <div id="emptyMessages" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">💌</div>
+                <h3>No messages yet!</h3>
+                <p>Be the first to leave a message for the happy couple!</p>
+            </div>
         </div>
-        
-        <div class="error-message" id="errorMessage">
-            ❌ Oops! Something went wrong. Please try again.
-        </div>
-        
-        <div class="info-box">
-            <h3>How to Set This Up:</h3>
-            <p>
-                1. <strong>Replace the Firebase config</strong> in the script section with your own<br>
-                2. <strong>Host this file</strong> on GitHub Pages, Netlify, or Vercel (all free!)<br>
-                3. <strong>Generate a QR code</strong> pointing to your hosted URL<br>
-                4. <strong>Print the QR code</strong> for your wedding tables
-            </p>
-        </div>
+    </div>
+    
+    <!-- Image/Video Modal -->
+    <div id="mediaModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <span class="modal-nav modal-prev" onclick="navigateModal(-1)">‹</span>
+        <span class="modal-nav modal-next" onclick="navigateModal(1)">›</span>
+        <div class="modal-content" id="modalContent"></div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <script>
         // REPLACE THIS WITH YOUR FIREBASE CONFIG
-        // Get this from Firebase Console > Project Settings
         const firebaseConfig = {
-            apiKey: "BFHFWJsFGRhj3vPhF2l8ITsd_WXo67IvKmVuy8setgQIE_JuCESb0fyGGpXrum47wjLC1WLTVe9mWHAKOPeUKMA",
+            apiKey: "YOUR-API-KEY",
             authDomain: "YOUR-AUTH-DOMAIN",
             projectId: "YOUR-PROJECT-ID",
             storageBucket: "YOUR-STORAGE-BUCKET",
             messagingSenderId: "YOUR-MESSAGING-SENDER-ID",
-            appId: "cynthia-nicko-wedding"
+            appId: "YOUR-APP-ID"
         };
         
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const storage = firebase.storage();
+        const firestore = firebase.firestore();
         
         let selectedFiles = [];
+        let galleryItems = [];
+        let currentModalIndex = 0;
+        let currentFilter = 'all';
         
-        // File input change handler
+        // Tab Navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Mark button as active
+            event.target.classList.add('active');
+            
+            // Load content if needed
+            if (tabName === 'gallery') {
+                loadGallery();
+            } else if (tabName === 'messages') {
+                loadMessages();
+            }
+        }
+        
+        // File Upload Handlers
         document.getElementById('fileInput').addEventListener('change', function(e) {
             handleFiles(e.target.files);
         });
         
-        // Drag and drop handlers
+        // Drag and drop
         const uploadArea = document.querySelector('.upload-area');
         
         uploadArea.addEventListener('dragover', (e) => {
@@ -322,17 +667,12 @@
                 fileName.className = 'file-name';
                 fileName.textContent = file.name;
                 
-                const fileSize = document.createElement('span');
-                fileSize.className = 'file-size';
-                fileSize.textContent = formatFileSize(file.size);
-                
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'remove-btn';
                 removeBtn.textContent = 'Remove';
                 removeBtn.onclick = () => removeFile(index);
                 
                 fileItem.appendChild(fileName);
-                fileItem.appendChild(fileSize);
                 fileItem.appendChild(removeBtn);
                 fileList.appendChild(fileItem);
             });
@@ -344,52 +684,43 @@
             document.getElementById('uploadBtn').disabled = selectedFiles.length === 0;
         }
         
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-        
         async function uploadFiles() {
             if (selectedFiles.length === 0) return;
             
             const uploadBtn = document.getElementById('uploadBtn');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('uploadSuccess');
+            const errorMsg = document.getElementById('uploadError');
             
             uploadBtn.disabled = true;
             uploadBtn.textContent = 'Uploading...';
-            progressBar.style.display = 'block';
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
             
             const uploaderName = document.getElementById('uploaderName').value || 'Anonymous';
             const timestamp = new Date().getTime();
             
             try {
-                let completed = 0;
-                const total = selectedFiles.length;
-                
                 for (const file of selectedFiles) {
-                    // Create a unique file name
+                    // Upload file to storage
                     const fileName = `${timestamp}_${uploaderName}_${file.name}`;
                     const storageRef = storage.ref(`wedding-photos/${fileName}`);
                     
-                    // Upload file
-                    await storageRef.put(file);
+                    const snapshot = await storageRef.put(file);
+                    const downloadURL = await snapshot.ref.getDownloadURL();
                     
-                    completed++;
-                    const progress = (completed / total) * 100;
-                    progressFill.style.width = progress + '%';
+                    // Save metadata to Firestore
+                    await firestore.collection('wedding-media').add({
+                        fileName: file.name,
+                        uploaderName: uploaderName,
+                        downloadURL: downloadURL,
+                        type: file.type.startsWith('image/') ? 'photo' : 'video',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        size: file.size
+                    });
                 }
                 
                 // Success
-                progressBar.style.display = 'none';
-                successMessage.style.display = 'block';
+                successMsg.style.display = 'block';
                 uploadBtn.textContent = 'Upload More Photos';
                 uploadBtn.disabled = false;
                 
@@ -401,12 +732,258 @@
                 
             } catch (error) {
                 console.error('Upload error:', error);
-                progressBar.style.display = 'none';
-                errorMessage.style.display = 'block';
+                errorMsg.style.display = 'block';
                 uploadBtn.textContent = 'Try Again';
                 uploadBtn.disabled = false;
             }
         }
+        
+        // Gallery Functions
+        async function loadGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading gallery...</p></div>';
+            
+            try {
+                const snapshot = await firestore.collection('wedding-media')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                galleryItems = [];
+                snapshot.forEach(doc => {
+                    galleryItems.push({ id: doc.id, ...doc.data() });
+                });
+                
+                displayGallery();
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                grid.innerHTML = '<p style="text-align: center; color: #999;">Error loading gallery. Please refresh.</p>';
+            }
+        }
+        
+        function displayGallery() {
+            const grid = document.getElementById('galleryGrid');
+            const emptyState = document.getElementById('emptyGallery');
+            
+            let itemsToShow = galleryItems;
+            
+            if (currentFilter === 'photos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'photo');
+            } else if (currentFilter === 'videos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'video');
+            }
+            
+            if (itemsToShow.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            grid.innerHTML = '';
+            
+            itemsToShow.forEach((item, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.onclick = () => openModal(index);
+                
+                if (item.type === 'photo') {
+                    galleryItem.innerHTML = `
+                        <img src="${item.downloadURL}" alt="${item.fileName}">
+                        <div class="gallery-item-info">
+                            <div class="gallery-item-name">${item.uploaderName}</div>
+                            <div class="gallery-item-date">${formatDate(item.timestamp)}</div>
+                        </div>
+                    `;
+                } else {
+                    galleryItem.innerHTML = `
+                        <video src="${item.downloadURL}">Your browser doesn't support video</video>
+                        <div class="gallery-item-info">
+                            <div class="gallery-item-name">🎥 ${item.uploaderName}</div>
+                            <div class="gallery-item-date">${formatDate(item.timestamp)}</div>
+                        </div>
+                    `;
+                }
+                
+                grid.appendChild(galleryItem);
+            });
+        }
+        
+        function filterGallery(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayGallery();
+        }
+        
+        function refreshGallery() {
+            loadGallery();
+        }
+        
+        function updateStats() {
+            const photos = galleryItems.filter(item => item.type === 'photo').length;
+            const videos = galleryItems.filter(item => item.type === 'video').length;
+            const contributors = [...new Set(galleryItems.map(item => item.uploaderName))].length;
+            
+            document.getElementById('photoCount').textContent = photos;
+            document.getElementById('videoCount').textContent = videos;
+            document.getElementById('contributorCount').textContent = contributors;
+        }
+        
+        // Modal Functions
+        function openModal(index) {
+            const modal = document.getElementById('mediaModal');
+            const content = document.getElementById('modalContent');
+            
+            let itemsToShow = galleryItems;
+            if (currentFilter === 'photos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'photo');
+            } else if (currentFilter === 'videos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'video');
+            }
+            
+            currentModalIndex = index;
+            const item = itemsToShow[index];
+            
+            if (item.type === 'photo') {
+                content.innerHTML = `<img src="${item.downloadURL}" alt="${item.fileName}">`;
+            } else {
+                content.innerHTML = `<video src="${item.downloadURL}" controls autoplay>Your browser doesn't support video</video>`;
+            }
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('mediaModal').style.display = 'none';
+        }
+        
+        function navigateModal(direction) {
+            let itemsToShow = galleryItems;
+            if (currentFilter === 'photos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'photo');
+            } else if (currentFilter === 'videos') {
+                itemsToShow = galleryItems.filter(item => item.type === 'video');
+            }
+            
+            currentModalIndex += direction;
+            
+            if (currentModalIndex < 0) {
+                currentModalIndex = itemsToShow.length - 1;
+            } else if (currentModalIndex >= itemsToShow.length) {
+                currentModalIndex = 0;
+            }
+            
+            openModal(currentModalIndex);
+        }
+        
+        // Messages/Guestbook Functions
+        async function sendMessage() {
+            const name = document.getElementById('messageName').value.trim();
+            const text = document.getElementById('messageText').value.trim();
+            const successMsg = document.getElementById('messageSuccess');
+            const errorMsg = document.getElementById('messageError');
+            
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            if (!name || !text) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            try {
+                await firestore.collection('wedding-messages').add({
+                    name: name,
+                    message: text,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                successMsg.style.display = 'block';
+                document.getElementById('messageName').value = '';
+                document.getElementById('messageText').value = '';
+                
+                // Reload messages
+                loadMessages();
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                errorMsg.textContent = '❌ Error sending message. Please try again.';
+                errorMsg.style.display = 'block';
+            }
+        }
+        
+        async function loadMessages() {
+            const messagesList = document.getElementById('messagesList');
+            const emptyState = document.getElementById('emptyMessages');
+            
+            messagesList.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading messages...</p></div>';
+            
+            try {
+                const snapshot = await firestore.collection('wedding-messages')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                if (snapshot.empty) {
+                    messagesList.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                messagesList.style.display = 'block';
+                emptyState.style.display = 'none';
+                messagesList.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const messageCard = document.createElement('div');
+                    messageCard.className = 'message-card';
+                    messageCard.innerHTML = `
+                        <div class="message-author">${data.name}</div>
+                        <div class="message-text">${data.message}</div>
+                        <div class="message-date">${formatDate(data.timestamp)}</div>
+                    `;
+                    messagesList.appendChild(messageCard);
+                });
+                
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                messagesList.innerHTML = '<p style="text-align: center; color: #999;">Error loading messages. Please refresh.</p>';
+            }
+        }
+        
+        // Utility Functions
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return date.toLocaleDateString('en-US', options);
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('mediaModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('mediaModal');
+            if (modal.style.display === 'block') {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowLeft') navigateModal(-1);
+                if (e.key === 'ArrowRight') navigateModal(1);
+            }
+        });
     </script>
 </body>
 </html>
