@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarah & John's Wedding Photos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f9f9ff;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f0ff;
+        }
+        
+        .upload-area.dragover {
+            background: #e8e8ff;
+            border-color: #764ba2;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .file-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .file-item {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 10px;
+        }
+        
+        .file-size {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .info-box {
+            background: #f0f0ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💑 Sarah & John's Wedding</h1>
+        <p class="subtitle">Share your photos & videos with us!</p>
+        
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">Click or drag files here</div>
+            <div class="upload-subtext">Photos & Videos (up to 50MB each)</div>
+        </div>
+        
+        <input type="file" id="fileInput" multiple accept="image/*,video/*">
+        
+        <input type="text" class="name-input" id="uploaderName" placeholder="Your name (optional)">
+        
+        <div class="file-list" id="fileList"></div>
+        
+        <button class="upload-btn" id="uploadBtn" disabled onclick="uploadFiles()">
+            Upload Photos & Videos
+        </button>
+        
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✅ Thank you! Your photos have been uploaded successfully!
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            ❌ Oops! Something went wrong. Please try again.
+        </div>
+        
+        <div class="info-box">
+            <h3>How to Set This Up:</h3>
+            <p>
+                1. <strong>Replace the Firebase config</strong> in the script section with your own<br>
+                2. <strong>Host this file</strong> on GitHub Pages, Netlify, or Vercel (all free!)<br>
+                3. <strong>Generate a QR code</strong> pointing to your hosted URL<br>
+                4. <strong>Print the QR code</strong> for your wedding tables
+            </p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    
+    <script>
+        // REPLACE THIS WITH YOUR FIREBASE CONFIG
+        // Get this from Firebase Console > Project Settings
+        const firebaseConfig = {
+            apiKey: "YOUR-API-KEY",
+            authDomain: "YOUR-AUTH-DOMAIN",
+            projectId: "YOUR-PROJECT-ID",
+            storageBucket: "YOUR-STORAGE-BUCKET",
+            messagingSenderId: "YOUR-MESSAGING-SENDER-ID",
+            appId: "YOUR-APP-ID"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+        
+        let selectedFiles = [];
+        
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+        
+        // Drag and drop handlers
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            displayFiles();
+            document.getElementById('uploadBtn').disabled = selectedFiles.length === 0;
+        }
+        
+        function displayFiles() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const fileName = document.createElement('span');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.className = 'file-size';
+                fileSize.textContent = formatFileSize(file.size);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = 'Remove';
+                removeBtn.onclick = () => removeFile(index);
+                
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(fileSize);
+                fileItem.appendChild(removeBtn);
+                fileList.appendChild(fileItem);
+            });
+        }
+        
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+            document.getElementById('uploadBtn').disabled = selectedFiles.length === 0;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) return;
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading...';
+            progressBar.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            const uploaderName = document.getElementById('uploaderName').value || 'Anonymous';
+            const timestamp = new Date().getTime();
+            
+            try {
+                let completed = 0;
+                const total = selectedFiles.length;
+                
+                for (const file of selectedFiles) {
+                    // Create a unique file name
+                    const fileName = `${timestamp}_${uploaderName}_${file.name}`;
+                    const storageRef = storage.ref(`wedding-photos/${fileName}`);
+                    
+                    // Upload file
+                    await storageRef.put(file);
+                    
+                    completed++;
+                    const progress = (completed / total) * 100;
+                    progressFill.style.width = progress + '%';
+                }
+                
+                // Success
+                progressBar.style.display = 'none';
+                successMessage.style.display = 'block';
+                uploadBtn.textContent = 'Upload More Photos';
+                uploadBtn.disabled = false;
+                
+                // Clear files
+                selectedFiles = [];
+                displayFiles();
+                document.getElementById('fileInput').value = '';
+                document.getElementById('uploaderName').value = '';
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                progressBar.style.display = 'none';
+                errorMessage.style.display = 'block';
+                uploadBtn.textContent = 'Try Again';
+                uploadBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
